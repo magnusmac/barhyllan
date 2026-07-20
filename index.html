@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Barhyllan · Sökbar spritkatalog</title>
+<meta name="theme-color" content="#17110c">
+<link rel="apple-touch-icon" href="icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Barhyllan">
+<link rel="icon" href="icon-192.png">
+<link rel="manifest" href="manifest.webmanifest">
+<style>
+  :root{
+    --bg:#17110c;
+    --panel:#211811;
+    --panel-2:#2b2016;
+    --line:#3a2c1e;
+    --brass:#c79a4b;
+    --brass-dim:#8f6f37;
+    --amber:#b5722e;
+    --cream:#ede4d3;
+    --muted:#a8977e;
+    --muted-2:#7c6c56;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:
+      radial-gradient(120% 60% at 50% -10%, #241a11 0%, var(--bg) 55%) fixed;
+    color:var(--cream);
+    font-family:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+    min-height:100vh;
+  }
+
+  /* ---- Header ---- */
+  header{
+    text-align:center;
+    padding:clamp(2.2rem,6vw,4rem) 1rem 1.4rem;
+    border-bottom:1px solid var(--line);
+    position:relative;
+  }
+  .eyebrow{
+    font-size:.72rem;letter-spacing:.42em;text-transform:uppercase;
+    color:var(--brass-dim);font-weight:600;
+  }
+  h1{
+    font-family:Georgia,"Times New Roman",serif;
+    font-weight:700;
+    font-size:clamp(2.4rem,7vw,4.4rem);
+    letter-spacing:.02em;
+    color:var(--cream);
+    margin:.35rem 0 .3rem;
+    line-height:1;
+  }
+  h1 .amp{color:var(--brass);font-style:italic}
+  .sub{color:var(--muted);font-size:.95rem;max-width:38ch;margin:0 auto}
+
+  /* ---- Controls ---- */
+  .controls{
+    position:sticky;top:0;z-index:20;
+    background:#17110c;
+    border-bottom:1px solid var(--line);
+    padding:.9rem 1rem;
+  }
+  .controls-inner{max-width:1120px;margin:0 auto}
+  .searchbar{position:relative;margin-bottom:.75rem}
+  .searchbar svg{
+    position:absolute;left:14px;top:50%;transform:translateY(-50%);
+    width:18px;height:18px;stroke:var(--muted-2);
+    pointer-events:none;
+  }
+  #search{
+    width:100%;padding:.85rem 1rem .85rem 2.7rem;
+    background:var(--panel);
+    border:1px solid var(--line);border-radius:12px;
+    color:var(--cream);font-size:1rem;font-family:inherit;
+    transition:border-color .15s, box-shadow .15s;
+  }
+  #search::placeholder{color:var(--muted-2)}
+  #search:focus{outline:none;border-color:var(--brass-dim);box-shadow:0 0 0 3px rgba(199,154,75,.15)}
+
+  .chips{display:flex;gap:.5rem;flex-wrap:wrap;align-items:center}
+  .chip{
+    font-family:inherit;font-size:.82rem;font-weight:500;
+    padding:.42rem .8rem;border-radius:999px;cursor:pointer;
+    background:transparent;color:var(--muted);
+    border:1px solid var(--line);
+    transition:all .15s;white-space:nowrap;
+  }
+  .chip:hover{border-color:var(--brass-dim);color:var(--cream)}
+  .chip.active{background:var(--brass);color:#1a1209;border-color:var(--brass);font-weight:600}
+  .chip .n{opacity:.6;font-variant-numeric:tabular-nums;margin-left:.3em}
+  .chip.active .n{opacity:.75}
+
+  .count{
+    max-width:1120px;margin:1.1rem auto .2rem;padding:0 1rem;
+    font-size:.8rem;letter-spacing:.16em;text-transform:uppercase;color:var(--muted-2);
+  }
+
+  /* ---- Grid ---- */
+  main{max-width:1120px;margin:0 auto;padding:.6rem 1rem 4rem}
+  .grid{
+    display:grid;gap:.85rem;
+    grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
+  }
+  .card{
+    background:linear-gradient(180deg,var(--panel-2),var(--panel));
+    border:1px solid var(--line);border-radius:14px;
+    padding:1.05rem 1.1rem 1.1rem;
+    position:relative;overflow:hidden;
+    transition:transform .12s ease, border-color .15s;
+  }
+  .card:hover{transform:translateY(-2px);border-color:var(--brass-dim)}
+  /* wax-seal family dot */
+  .card::before{
+    content:"";position:absolute;top:1.15rem;right:1.1rem;
+    width:11px;height:11px;border-radius:50%;
+    background:var(--dot,var(--brass));
+    box-shadow:0 0 0 3px rgba(0,0,0,.25);
+  }
+  .card .cat{
+    font-size:.66rem;letter-spacing:.2em;text-transform:uppercase;
+    color:var(--dot,var(--brass));font-weight:600;
+  }
+  .card h3{
+    font-family:Georgia,serif;font-weight:700;
+    font-size:1.18rem;line-height:1.15;color:var(--cream);
+    margin:.28rem 2rem .5rem 0;
+  }
+  .meta{display:flex;flex-wrap:wrap;gap:.35rem;margin-bottom:.6rem}
+  .tag{
+    font-size:.72rem;padding:.2rem .55rem;border-radius:6px;
+    background:rgba(199,154,75,.09);border:1px solid var(--line);
+    color:var(--muted);white-space:nowrap;
+  }
+  .tag.age{color:var(--brass);border-color:rgba(199,154,75,.3)}
+  .tag.price{color:var(--brass);border-color:rgba(199,154,75,.3);font-variant-numeric:tabular-nums}
+  .notes{font-size:.86rem;color:var(--muted);line-height:1.45}
+
+  .empty{
+    text-align:center;padding:4rem 1rem;color:var(--muted-2);
+    grid-column:1/-1;
+  }
+  .empty strong{display:block;color:var(--muted);font-size:1.1rem;margin-bottom:.4rem;font-family:Georgia,serif}
+
+  footer{
+    text-align:center;padding:2rem 1rem 3rem;
+    color:var(--muted-2);font-size:.78rem;border-top:1px solid var(--line);
+  }
+  mark{background:rgba(199,154,75,.35);color:var(--cream);border-radius:2px;padding:0 1px}
+
+  @media(max-width:520px){
+    .grid{grid-template-columns:1fr}
+    h1{font-size:2.6rem}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">Barhyllan</div>
+  <h1>Sprit <span class="amp">&amp;</span> Sort</h1>
+  <p class="sub">Sökbar katalog över samlingen — sök på namn, region eller smak, eller filtrera på sort.</p>
+</header>
+
+<div class="controls">
+  <div class="controls-inner">
+    <div class="searchbar">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+      <input id="search" type="search" placeholder="Sök t.ex. Islay, rök, sherry, Zacapa, honung…" autocomplete="off">
+    </div>
+    <div class="chips" id="chips"></div>
+  </div>
+</div>
+
+<div class="count" id="count"></div>
+
+<main>
+  <div class="grid" id="grid"></div>
+</main>
+
+<footer>Sprit från fotograferade hyllor · vin, portvin och cocktails från lottas.nu · öl från Björkstadens Bryggeri (Lottas mikrobryggeri) · fristående HTML-fil som fungerar offline</footer>
+
+<script>
+/* ---------- Färgkoder per sort ---------- */
+const FAMILY_COLOR = {
+  "Skotsk single malt":"#c79a4b",
+  "Skotsk blend":"#d8a94f",
+  "Irländsk whiskey":"#4f9d5b",
+  "Japansk whisky":"#c85a5a",
+  "Nordisk whisky":"#6ba4c9",
+  "Rom":"#b5722e",
+  "Gin":"#7fb9a8",
+  "Tequila":"#b58bcf",
+  "Likör & övrigt":"#c9a24a",
+  "Vitt vin":"#cdbf6a",
+  "Mousserande":"#e6c34d",
+  "Rött vin":"#9b2f3f",
+  "Sött & portvin":"#7a3352",
+  "Cocktail":"#4aa3c7",
+  "Öl":"#d98f1e"
+};
+
+/* ---------- Data ---------- */
+const DATA = [
+  // ===== Skotsk single malt — Highland/Speyside =====
+  {namn:"Glenmorangie Original 10", kat:"Skotsk single malt", region:"Highland", land:"Skottland", alder:"10 år", styrka:"40%", smak:"Mjuk och blommig med citrus, vanilj och mogen persika. Lätt och lättdrucken."},
+  {namn:"Glenmorangie Nectar d'Or", kat:"Skotsk single malt", region:"Highland", land:"Skottland", alder:"", styrka:"46%", smak:"Efterlagrad på Sauternes-fat. Honung, citron, kanel och en dessertaktig sötma."},
+  {namn:"Glenmorangie Quinta Ruban 12", kat:"Skotsk single malt", region:"Highland", land:"Skottland", alder:"12 år", styrka:"46%", smak:"Portfatslagrad. Mörk choklad, mynta, apelsin och valnöt — fyllig och lite bitterljuv."},
+  {namn:"Glenmorangie 18 Extremely Rare", kat:"Skotsk single malt", region:"Highland", land:"Skottland", alder:"18 år", styrka:"43%", smak:"Rik och elegant med honung, blommighet, sherrytoner och lång fatlagrad finish."},
+  {namn:"Glenfiddich 12", kat:"Skotsk single malt", region:"Speyside", land:"Skottland", alder:"12 år", styrka:"40%", smak:"Klassisk Speyside. Päron, grönt äpple och en mjuk ektorrhet."},
+  {namn:"Glenfiddich 15 Solera", kat:"Skotsk single malt", region:"Speyside", land:"Skottland", alder:"15 år", styrka:"40%", smak:"Solera-gift. Honung, russin, marsipan och varm krydda."},
+  {namn:"Glenfiddich 18", kat:"Skotsk single malt", region:"Speyside", land:"Skottland", alder:"18 år", styrka:"40%", smak:"Baklagrad frukt, äpple, ek och kanel. Balanserad och rund."},
+  {namn:"Glenfiddich 21 Gran Reserva", kat:"Skotsk single malt", region:"Speyside", land:"Skottland", alder:"21 år", styrka:"40%", smak:"Efterlagrad på romfat. Banan, toffee, ingefära och tropisk sötma."},
+  {namn:"The Glenlivet 15 French Oak", kat:"Skotsk single malt", region:"Speyside", land:"Skottland", alder:"15 år", styrka:"40%", smak:"Nötig och kryddig från fransk ek, med mjuk fruktighet."},
+  {namn:"The Glenlivet Archive 21", kat:"Skotsk single malt", region:"Speyside", land:"Skottland", alder:"21 år", styrka:"43%", smak:"Rik, kryddig och mörk frukt. Djup fatkaraktär."},
+  {namn:"The Glenlivet XXV (25)", kat:"Skotsk single malt", region:"Speyside", land:"Skottland", alder:"25 år", styrka:"43%", smak:"Oloroso-sherry, russin, apelsin och choklad. Lyxig och lång."},
+  {namn:"The Glenlivet Founder's Reserve", kat:"Skotsk single malt", region:"Speyside", land:"Skottland", alder:"", styrka:"40%", smak:"Citrus, päron och toffee med len, krämig avslutning."},
+  {namn:"The Glenlivet Nàdurra", kat:"Skotsk single malt", region:"Speyside", land:"Skottland", alder:"", styrka:"~60%", smak:"Fatstyrka. Kraftig oloroso-sherry, torkad frukt och krydda."},
+  {namn:"The Balvenie DoubleWood 12", kat:"Skotsk single malt", region:"Speyside", land:"Skottland", alder:"12 år", styrka:"40%", smak:"Två fat. Honung, kanel och sherrysötma — mjuk favorit."},
+  {namn:"The Balvenie Single Barrel 15", kat:"Skotsk single malt", region:"Speyside", land:"Skottland", alder:"15 år", styrka:"47.8%", smak:"Från enskilt fat. Ek, vanilj och honung med tydlig fatkaraktär."},
+  {namn:"The Balvenie PortWood 21", kat:"Skotsk single malt", region:"Speyside", land:"Skottland", alder:"21 år", styrka:"40%", smak:"Portfatsefterlagrad. Russin, nötter och elegant torr frukt."},
+  {namn:"The Macallan 12 Double Cask", kat:"Skotsk single malt", region:"Speyside", land:"Skottland", alder:"12 år", styrka:"40%", smak:"Honung, vanilj, apelsin och ek. Sherry- och bourbonfat i harmoni."},
+  {namn:"The Macallan Classic Cut 2024", kat:"Skotsk single malt", region:"Speyside", land:"Skottland", alder:"", styrka:"~50%", smak:"Årlig begränsad utgåva i fatstyrka. Citrus, ek och kryddig hetta."},
+  {namn:"The Macallan 18 Double Cask", kat:"Skotsk single malt", region:"Speyside", land:"Skottland", alder:"18 år", styrka:"43%", smak:"Rik och mogen. Russin, kryddor, choklad och djup sherry."},
+  {namn:"The Macallan Harmony Collection", kat:"Skotsk single malt", region:"Speyside", land:"Skottland", alder:"", styrka:"44%", smak:"Tematisk utgåva med toner av choklad och kaffe."},
+  {namn:"Cragganmore 12", kat:"Skotsk single malt", region:"Speyside", land:"Skottland", alder:"12 år", styrka:"40%", smak:"Komplex och maltig med lätt rök — en av Classic Malts."},
+  {namn:"Dalwhinnie 15", kat:"Skotsk single malt", region:"Highland", land:"Skottland", alder:"15 år", styrka:"43%", smak:"Ljung, honung och mjuk maltsötma. Ren och mild."},
+  {namn:"Oban 14", kat:"Skotsk single malt", region:"West Highland", land:"Skottland", alder:"14 år", styrka:"43%", smak:"Salt havsbris, citrus, honung och en aning rök."},
+  {namn:"Highland Park 18 Viking Pride", kat:"Skotsk single malt", region:"Orkney", land:"Skottland", alder:"18 år", styrka:"43%", smak:"Rökig honung, sherry och apelsin. Elegant balans av torv och sötma."},
+  {namn:"Highland Park 21", kat:"Skotsk single malt", region:"Orkney", land:"Skottland", alder:"21 år", styrka:"46%", smak:"Rik, kryddig sherry med mild ljungrök och torkad frukt."},
+  {namn:"Highland Park 25", kat:"Skotsk single malt", region:"Orkney", land:"Skottland", alder:"25 år", styrka:"46%", smak:"Djup och mörk. Mogen frukt, choklad och mjuk rök."},
+  {namn:"Highland Park Valfather", kat:"Skotsk single malt", region:"Orkney", land:"Skottland", alder:"", styrka:"47%", smak:"Den rökigaste HP-utgåvan. Kraftig torv, tjära och citrus."},
+  {namn:"Auchentoshan 12", kat:"Skotsk single malt", region:"Lowland", land:"Skottland", alder:"12 år", styrka:"40%", smak:"Trippeldestillerad och mjuk. Nötig, citrus och lätt karamell."},
+  {namn:"Auchentoshan Three Wood", kat:"Skotsk single malt", region:"Lowland", land:"Skottland", alder:"", styrka:"43%", smak:"Tre fat inkl. oloroso & PX. Russin, sherry och söt fyllighet."},
+  {namn:"Auchentoshan American Oak", kat:"Skotsk single malt", region:"Lowland", land:"Skottland", alder:"", styrka:"40%", smak:"Vanilj, citrus och kokos från amerikansk ek. Lätt och ljus."},
+  {namn:"Glenkinchie 12", kat:"Skotsk single malt", region:"Lowland", land:"Skottland", alder:"12 år", styrka:"43%", smak:"Lätt och gräsig med citron och mjuk maltighet — Lowland-klassiker."},
+  {namn:"Glen Scotia 1991 (Murray McDavid)", kat:"Skotsk single malt", region:"Campbeltown", land:"Skottland", alder:"14 år", styrka:"46%", smak:"Oberoende buteljering. Maritim och oljig med Campbeltowns salta karaktär."},
+  {namn:"Miltonduff 15 (Ballantine's)", kat:"Skotsk single malt", region:"Speyside", land:"Skottland", alder:"15 år", styrka:"46%", smak:"Blommig och mjuk med äpple och honung. Ballantine's single malt."},
+
+  // ===== Islay & rökiga =====
+  {namn:"Lagavulin 16", kat:"Skotsk single malt", region:"Islay", land:"Skottland", alder:"16 år", styrka:"43%", smak:"Kraftig torvrök, tång, sjögräs och en söt sherryunderton. Ikonisk Islay."},
+  {namn:"Talisker 10", kat:"Skotsk single malt", region:"Isle of Skye", land:"Skottland", alder:"10 år", styrka:"45.8%", smak:"Peppar, rök, havssalt och citrus — den maritima klassikern från Skye."},
+  {namn:"Ardbeg Ten", kat:"Skotsk single malt", region:"Islay", land:"Skottland", alder:"10 år", styrka:"46%", smak:"Intensiv torv, citrus, rök och en medicinsk skärpa. Klassisk Ardbeg."},
+  {namn:"Ardbeg Wee Beastie 5", kat:"Skotsk single malt", region:"Islay", land:"Skottland", alder:"5 år", styrka:"47.4%", smak:"Ung och rå. Kraftig torv, svartpeppar och rökt kött."},
+  {namn:"Ardbeg Corryvreckan", kat:"Skotsk single malt", region:"Islay", land:"Skottland", alder:"", styrka:"57.1%", smak:"Fatstyrka. Kraftfull svartpeppar, rök och mörk frukt — namngiven efter malströmmen."},
+  {namn:"Caol Ila 12", kat:"Skotsk single malt", region:"Islay", land:"Skottland", alder:"12 år", styrka:"43%", smak:"Rök, citron och maritim friskhet. Mjukare Islay-stil."},
+  {namn:"Laphroaig 10", kat:"Skotsk single malt", region:"Islay", land:"Skottland", alder:"10 år", styrka:"40%", smak:"Kraftig jod, tång och medicinsk torv. Den mest utpräglade Islay-profilen."},
+  {namn:"Laphroaig Quarter Cask", kat:"Skotsk single malt", region:"Islay", land:"Skottland", alder:"", styrka:"48%", smak:"Små fat ger extra ek och sötma ovanpå den kraftiga röken."},
+  {namn:"Bunnahabhain 12", kat:"Skotsk single malt", region:"Islay", land:"Skottland", alder:"12 år", styrka:"46.3%", smak:"Nästan orökt Islay. Nötig sherry, maltsötma och salt havsbris."},
+  {namn:"Bowmore 12", kat:"Skotsk single malt", region:"Islay", land:"Skottland", alder:"12 år", styrka:"40%", smak:"Balanserad rök, citron och honung. Elegant introduktion till Islay."},
+  {namn:"Bowmore 15", kat:"Skotsk single malt", region:"Islay", land:"Skottland", alder:"15 år", styrka:"43%", smak:"Sherryefterlagrad. Mörk frukt, rök och choklad."},
+
+  // ===== Skotsk blend =====
+  {namn:"Johnnie Walker Red Label", kat:"Skotsk blend", region:"Blend", land:"Skottland", alder:"", styrka:"40%", smak:"Ung, kryddig och rökig. Bäst i longdrink."},
+  {namn:"Johnnie Walker Black Label 12", kat:"Skotsk blend", region:"Blend", land:"Skottland", alder:"12 år", styrka:"40%", smak:"Mjuk rök, russin och vanilj. Klassisk blend med djup."},
+  {namn:"Johnnie Walker Double Black", kat:"Skotsk blend", region:"Blend", land:"Skottland", alder:"", styrka:"40%", smak:"Kraftigare och rökigare version av Black Label."},
+  {namn:"Johnnie Walker Gold Label Reserve", kat:"Skotsk blend", region:"Blend", land:"Skottland", alder:"", styrka:"40%", smak:"Honung, mjuk frukt och en len, lyxig känsla."},
+  {namn:"Johnnie Walker 18", kat:"Skotsk blend", region:"Blend", land:"Skottland", alder:"18 år", styrka:"40%", smak:"Rik och balanserad med mörk choklad och mjuk rök."},
+  {namn:"Johnnie Walker Blue Label", kat:"Skotsk blend", region:"Blend", land:"Skottland", alder:"", styrka:"40%", smak:"Premiumblend. Silkeslen med honung, rök och lång komplex finish."},
+  {namn:"Ballantine's 12", kat:"Skotsk blend", region:"Blend", land:"Skottland", alder:"12 år", styrka:"40%", smak:"Honung, vanilj och mjuk maltighet."},
+  {namn:"Black Bottle", kat:"Skotsk blend", region:"Blend", land:"Skottland", alder:"", styrka:"40%", smak:"Rökig blend med tydligt Islay-inslag till lågt pris."},
+  {namn:"The Famous Grouse Bourbon Cask", kat:"Skotsk blend", region:"Blend", land:"Skottland", alder:"", styrka:"40%", smak:"Vanilj och kola från bourbonfat. Mjuk och söt."},
+  {namn:"The Famous Grouse Smoky Black", kat:"Skotsk blend", region:"Blend", land:"Skottland", alder:"", styrka:"40%", smak:"Rökversion av klassikern med lätt torv."},
+  {namn:"William Grant's Sherry Cask Reserve", kat:"Skotsk blend", region:"Blend", land:"Skottland", alder:"", styrka:"40%", smak:"Sherryfatslagrad blend med russin och krydda."},
+  {namn:"Grant's Ale Cask Edition", kat:"Skotsk blend", region:"Blend", land:"Skottland", alder:"", styrka:"40%", smak:"Efterlagrad på ölfat — maltig och lätt söt."},
+
+  // ===== Irländsk whiskey =====
+  {namn:"Jameson 18 Limited Reserve", kat:"Irländsk whiskey", region:"Blend", land:"Irland", alder:"18 år", styrka:"40%", smak:"Rik och mogen. Sherry, toffee och mjuk krydda."},
+  {namn:"Jameson Black Barrel", kat:"Irländsk whiskey", region:"Blend", land:"Irland", alder:"", styrka:"40%", smak:"Extra kolade fat ger mer vanilj, kola och kryddig fyllighet."},
+  {namn:"Jameson Select Reserve", kat:"Irländsk whiskey", region:"Blend", land:"Irland", alder:"", styrka:"40%", smak:"Small batch med djupare fatkaraktär än standard."},
+  {namn:"Bushmills 21 Single Malt", kat:"Irländsk whiskey", region:"Single malt", land:"Irland", alder:"21 år", styrka:"40%", smak:"Madeirafinish. Tropisk frukt, honung och nötter — irländsk lyx."},
+  {namn:"Bushmills Single Malt", kat:"Irländsk whiskey", region:"Single malt", land:"Irland", alder:"", styrka:"40%", smak:"Mjuk trippeldestillerad malt med frukt och vanilj."},
+
+  // ===== Japansk whisky =====
+  {namn:"Hibiki Japanese Harmony", kat:"Japansk whisky", region:"Blend", land:"Japan", alder:"", styrka:"43%", smak:"Elegant och harmonisk. Honung, apelsin, ek och en aning rök."},
+  {namn:"Yamazaki 12", kat:"Japansk whisky", region:"Single malt", land:"Japan", alder:"12 år", styrka:"43%", smak:"Honung, mango och sherry med mizunara-ekens rökelse-ton."},
+  {namn:"Hakushu 12", kat:"Japansk whisky", region:"Single malt", land:"Japan", alder:"12 år", styrka:"43%", smak:"Frisk och grön. Mynta, päron och en lätt läkande rök."},
+  {namn:"Nikka From The Barrel", kat:"Japansk whisky", region:"Blend", land:"Japan", alder:"", styrka:"51.4%", smak:"Kraftig och fyllig. Krydda, torkad frukt och ek — mycket smak per krona."},
+  {namn:"Nikka Super Rare Old", kat:"Japansk whisky", region:"Blend", land:"Japan", alder:"", styrka:"43%", smak:"Mjuk och rund blend med ek och mild sötma."},
+
+  // ===== Nordisk whisky =====
+  {namn:"High Coast Berg", kat:"Nordisk whisky", region:"Ångermanland", land:"Sverige", alder:"", styrka:"~55%", smak:"Fatstyrka och orökt. Kraftig, fruktig och ekig norrländsk malt."},
+  {namn:"High Coast Timmer", kat:"Nordisk whisky", region:"Ångermanland", land:"Sverige", alder:"", styrka:"48%", smak:"Rökt malt med balans mellan torv och fruktsötma."},
+  {namn:"High Coast Hav", kat:"Nordisk whisky", region:"Ångermanland", land:"Sverige", alder:"", styrka:"48%", smak:"Rökig och maritim profil."},
+  {namn:"High Coast Älv", kat:"Nordisk whisky", region:"Ångermanland", land:"Sverige", alder:"", styrka:"46%", smak:"Orökt och fruktig — den ljusa sidan av High Coast."},
+  {namn:"High Coast Doubles", kat:"Nordisk whisky", region:"Ångermanland", land:"Sverige", alder:"", styrka:"~50%", smak:"Rökt serie som utforskar olika fat och stilar."},
+  {namn:"Agitator Single Malt", kat:"Nordisk whisky", region:"Skåne", land:"Sverige", alder:"", styrka:"40%", smak:"Vakuumdestillerad skånsk single malt — mjuk och tillgänglig."},
+  {namn:"Kyrö Malt Rye (Peat Smoke)", kat:"Nordisk whisky", region:"Finland", land:"Finland", alder:"", styrka:"47.2%", smak:"Finsk 100% rågwhisky, torvrökt. Kryddig och robust."},
+  {namn:"Kyrö Wood Smoke", kat:"Nordisk whisky", region:"Finland", land:"Finland", alder:"", styrka:"47.2%", smak:"Rökt över trä. Rågens pepprighet med rökig sötma."},
+
+  // ===== Rom =====
+  {namn:"Ron Zacapa 23 Solera", kat:"Rom", region:"Guatemala", land:"Guatemala", alder:"Solera", styrka:"40%", smak:"Solera-blandad. Toffee, vanilj, russin och honung — mjuk och söt."},
+  {namn:"Ron Zacapa Edición Negra", kat:"Rom", region:"Guatemala", land:"Guatemala", alder:"", styrka:"43%", smak:"Kraftigare och torrare med kolad ek och krydda."},
+  {namn:"Ron Zacapa Reserva Limitada 2019", kat:"Rom", region:"Guatemala", land:"Guatemala", alder:"", styrka:"45%", smak:"Begränsad årgång. Rik, torkad frukt och djup fatkaraktär."},
+  {namn:"Ron Zacapa Royal", kat:"Rom", region:"Guatemala", land:"Guatemala", alder:"", styrka:"45%", smak:"Cognacfatsfinish. Mjuk premiumrom med choklad och nötter."},
+  {namn:"Ron Zacapa XO", kat:"Rom", region:"Guatemala", land:"Guatemala", alder:"", styrka:"40%", smak:"Efterlagrad på franska cognacfat. Elegant med choklad och apelsin."},
+  {namn:"Brugal 888", kat:"Rom", region:"Dominikanska rep.", land:"Dominikanska republiken", alder:"", styrka:"40%", smak:"Trippellagrad och torr. Ek, kaffe och torkad frukt."},
+  {namn:"Diplomático Reserva Exclusiva", kat:"Rom", region:"Venezuela", land:"Venezuela", alder:"", styrka:"40%", smak:"Toffee, apelsinskal, choklad och söt sirapsighet. Populär sippingrom."},
+  {namn:"Diplomático Mantuano", kat:"Rom", region:"Venezuela", land:"Venezuela", alder:"", styrka:"40%", smak:"Vanilj, kola och mild ek — lättare Diplomático."},
+  {namn:"Diplomático Planas", kat:"Rom", region:"Venezuela", land:"Venezuela", alder:"", styrka:"47%", smak:"Vit rom med kropp. Torr, örtig och perfekt i cocktails."},
+  {namn:"El Dorado 12", kat:"Rom", region:"Guyana", land:"Guyana", alder:"12 år", styrka:"40%", smak:"Demerara-rom. Russin, kola och mörk sötma."},
+  {namn:"El Dorado 15", kat:"Rom", region:"Guyana", land:"Guyana", alder:"15 år", styrka:"43%", smak:"Rik karamell, torkad frukt och krydda. Legendarisk demerara."},
+  {namn:"El Dorado 21", kat:"Rom", region:"Guyana", land:"Guyana", alder:"21 år", styrka:"43%", smak:"Djup och mogen. Choklad, torkad frukt och lång ekig finish."},
+  {namn:"Santa Teresa 1796", kat:"Rom", region:"Venezuela", land:"Venezuela", alder:"Solera", styrka:"40%", smak:"Torr solera-rom med ek, choklad och nötter. Elegant och balanserad."},
+  {namn:"Santa Teresa Rhum Orange", kat:"Rom", region:"Venezuela", land:"Venezuela", alder:"", styrka:"40%", smak:"Rom med apelsin — fruktig och söt, fin i drinkar."},
+  {namn:"Havana Club 15 Gran Reserva", kat:"Rom", region:"Kuba", land:"Kuba", alder:"15 år", styrka:"40%", smak:"Tobak, ek och torkad frukt. Kubansk premiumrom."},
+  {namn:"Havana Club Máximo Extra Añejo", kat:"Rom", region:"Kuba", land:"Kuba", alder:"", styrka:"40%", smak:"Ultrapremium blandad av mästaren. Sammetslen och komplex."},
+  {namn:"Planteray Barbados Grand Reserve", kat:"Rom", region:"Barbados", land:"Barbados", alder:"", styrka:"40%", smak:"Banan, vanilj och kola. Mjuk allroundrom (f.d. Plantation)."},
+  {namn:"Planteray Jamaica 5", kat:"Rom", region:"Jamaica", land:"Jamaica", alder:"5 år", styrka:"~43%", smak:"Funky jamaicansk estrar. Banan, tropisk frukt och kraft."},
+  {namn:"Planteray Barbados 2016 Single Cask", kat:"Rom", region:"Barbados", land:"Barbados", alder:"", styrka:"~48%", smak:"Enskilt fat. Torrare och mer koncentrerad barbadosstil."},
+  {namn:"Planteray Stiggins' Fancy Pineapple", kat:"Rom", region:"Barbados", land:"Barbados", alder:"", styrka:"40%", smak:"Ananasinfuserad rom efter recept från 1824 — unik och rökt-fruktig."},
+  {namn:"Planteray Cut & Dry Coconut", kat:"Rom", region:"Barbados", land:"Barbados", alder:"", styrka:"40%", smak:"Torr kokosrom, mycket mindre söt än Malibu."},
+  {namn:"Plantation Trinidad", kat:"Rom", region:"Trinidad", land:"Trinidad", alder:"", styrka:"~43%", smak:"Trinidadstil — torr, ekig och elegant."},
+  {namn:"Plantation Fiji", kat:"Rom", region:"Fiji", land:"Fiji", alder:"", styrka:"~40%", smak:"Tropisk och funky med hög esterhalt."},
+  {namn:"Angostura 1919", kat:"Rom", region:"Trinidad", land:"Trinidad", alder:"", styrka:"40%", smak:"Kola, banan och mjuk vanilj. Mjuk sippingrom."},
+  {namn:"Bacardi Carta", kat:"Rom", region:"Karibien", land:"Puerto Rico", alder:"", styrka:"40%", smak:"Ljus och lätt — mojito- och daiquiri-basen."},
+  {namn:"51 Cachaça", kat:"Rom", region:"Brasilien", land:"Brasilien", alder:"", styrka:"40%", smak:"Brasiliansk cachaça av färsk sockerrörsjuice — caipirinhans hjärta."},
+  {namn:"Boge Bränneri (Gotland)", kat:"Rom", region:"Gotland", land:"Sverige", alder:"", styrka:"", smak:"Gotländskt gårdssortiment med rom och brännvin, bl.a. 1829 och Rabarber."},
+
+  // ===== Gin =====
+  {namn:"Hernö Old Tom Gin", kat:"Gin", region:"Ångermanland", land:"Sverige", alder:"", styrka:"43%", smak:"Lätt sötad Old Tom. Enbär, honung och citrus — fin i Tom Collins."},
+  {namn:"Hernö Navy Strength Gin", kat:"Gin", region:"Ångermanland", land:"Sverige", alder:"", styrka:"57%", smak:"Kraftig navy strength. Intensiv enbär och citrus, håller emot i drinkar."},
+  {namn:"Tanqueray London Dry", kat:"Gin", region:"London Dry", land:"England", alder:"", styrka:"43.1%", smak:"Ren och torr. Enbär, koriander och angelika — G&T-standarden."},
+  {namn:"Monkey 47", kat:"Gin", region:"Schwarzwald", land:"Tyskland", alder:"", styrka:"47%", smak:"47 botanicals inkl. lingon. Komplex, örtig och lätt fruktig."},
+  {namn:"Norrbottens Forest Gin", kat:"Gin", region:"Norrbotten", land:"Sverige", alder:"", styrka:"40.5%", smak:"Skogig och barrig med gran och norrländska växter."},
+
+  // ===== Tequila =====
+  {namn:"Cazcabel Blanco", kat:"Tequila", region:"Jalisco", land:"Mexiko", alder:"", styrka:"38%", smak:"100% agave blanco. Pepprig och örtig — margarita och paloma."},
+
+  // ===== Likör & övrigt =====
+  {namn:"Cointreau", kat:"Likör & övrigt", region:"Triple sec", land:"Frankrike", alder:"", styrka:"40%", smak:"Klar apelsinlikör. Bas i Margarita, Cosmopolitan och Sidecar."},
+  {namn:"Luxardo Limoncello", kat:"Likör & övrigt", region:"Citronlikör", land:"Italien", alder:"", styrka:"27%", smak:"Söt och frisk citron. Serveras iskall eller i spritz."},
+  {namn:"Baileys Original", kat:"Likör & övrigt", region:"Gräddlikör", land:"Irland", alder:"", styrka:"17%", smak:"Irländsk whiskey med grädde, choklad och vanilj."},
+  {namn:"Licor 43", kat:"Likör & övrigt", region:"Örtlikör", land:"Spanien", alder:"", styrka:"31%", smak:"43 örter och kryddor. Vanilj och citrus — söt och krämig."},
+  {namn:"Drambuie", kat:"Likör & övrigt", region:"Whiskylikör", land:"Skottland", alder:"", styrka:"40%", smak:"Skotsk whisky med honung och örter. Basen i Rusty Nail."},
+  {namn:"Frangelico", kat:"Likör & övrigt", region:"Nötlikör", land:"Italien", alder:"", styrka:"20%", smak:"Rostad hasselnöt med vanilj och kakao."},
+  {namn:"Xanté", kat:"Likör & övrigt", region:"Päron/Cognac", land:"", alder:"", styrka:"38%", smak:"Päron infuserat i cognac — mjuk och fruktig."},
+  {namn:"D.O.M. Bénédictine", kat:"Likör & övrigt", region:"Örtlikör", land:"Frankrike", alder:"", styrka:"40%", smak:"27 örter och kryddor efter klosterrecept. Honung och saffran."},
+  {namn:"Galliano", kat:"Likör & övrigt", region:"Örtlikör", land:"Italien", alder:"", styrka:"", smak:"Vanilj och anis. Basen i Harvey Wallbanger."},
+  {namn:"Mancino Vermouth", kat:"Likör & övrigt", region:"Vermouth", land:"Italien", alder:"", styrka:"16%", smak:"Aromatiserat vin med örter — bas i Negroni och Manhattan."},
+  {namn:"Passoã", kat:"Likör & övrigt", region:"Fruktlikör", land:"Frankrike", alder:"", styrka:"17%", smak:"Passionsfrukt — söt och tropisk i drinkar."},
+  {namn:"Joseph Cartron Crème de Framboise", kat:"Likör & övrigt", region:"Bärlikör", land:"Frankrike", alder:"", styrka:"16%", smak:"Hallon — söt och intensiv, fin i champagnedrinkar."},
+  {namn:"Vaccari Sambuca", kat:"Likör & övrigt", region:"Anislikör", land:"Italien", alder:"", styrka:"38%", smak:"Trippel anis — söt lakritsprofil."},
+  {namn:"Ricard Pastis", kat:"Likör & övrigt", region:"Anis", land:"Frankrike", alder:"", styrka:"45%", smak:"Provensalsk anis och lakrits. Grumlas med vatten."},
+  {namn:"Malibu", kat:"Likör & övrigt", region:"Kokoslikör", land:"Barbados", alder:"", styrka:"21%", smak:"Söt kokos på rombas. Piña Colada-favorit."},
+  {namn:"Absolut Vanilia", kat:"Likör & övrigt", region:"Smaksatt vodka", land:"Sverige", alder:"", styrka:"38%", smak:"Vaniljsmaksatt svensk vodka."},
+  {namn:"Absolut Pears", kat:"Likör & övrigt", region:"Smaksatt vodka", land:"Sverige", alder:"", styrka:"38%", smak:"Päronsmaksatt svensk vodka."},
+  {namn:"Bols Cacao Brown", kat:"Likör & övrigt", region:"Kakaolikör", land:"Nederländerna", alder:"", styrka:"24%", smak:"Mörk choklad/kakao — bas i Brandy Alexander."},
+  {namn:"Sourz Apple", kat:"Likör & övrigt", region:"Sur likör", land:"", alder:"", styrka:"15%", smak:"Söt-sur äppellikör för shots."},
+  {namn:"CastelGiocondo Grappa", kat:"Likör & övrigt", region:"Grappa", land:"Italien", alder:"", styrka:"", smak:"Italiensk druvsprit från pressrester — kraftig avslutare."},
+  {namn:"Sandeman Fine White Porto", kat:"Sött & portvin", region:"Portvin", land:"Portugal", alder:"", styrka:"19.5%", smak:"Vitt portvin. Nötigt och halvtorrt — fint som aperitif med tonic."},
+
+  // ===== Vitt vin (Lottas vinlista) =====
+  {namn:"Franschhoek Cellars Chardonnay", kat:"Vitt vin", region:"Chardonnay", land:"Sydafrika", alder:"2018", styrka:"", pris:"300 kr/fl", smak:"Doft av karamell, kryddnejlika och apelsinskal. Citrus och melon med frisk, limeaktig finish."},
+  {namn:"Weingut Hörner Riesling Trocken", kat:"Vitt vin", region:"Riesling · Pfalz", land:"Tyskland", alder:"2020", styrka:"", pris:"375 kr/fl", smak:"Gröna äpplen, stenfrukt, mineral och lätt petroleum. Torr och läskande med klassisk rieslingsyra."},
+  {namn:"Kuentz-Bas Pinot Gris Mosaik", kat:"Vitt vin", region:"Pinot Gris · Alsace", land:"Frankrike", alder:"2018", styrka:"", pris:"450 kr/fl", smak:"Gul frukt, nektar och vita blommor. Medelfyllig, torr och avrundad med jasmin och skiffer."},
+  {namn:"Domaine Louis Moreau Petit Chablis", kat:"Vitt vin", region:"Chardonnay · Bourgogne", land:"Frankrike", alder:"2020", styrka:"", pris:"525 kr/fl", smak:"Stor doft av mineral och citrus. Torr, frisk och balanserad med lång avslutning."},
+  {namn:"La Croix St-Laurent Sancerre", kat:"Vitt vin", region:"Sauvignon Blanc · Loire", land:"Frankrike", alder:"2018", styrka:"", pris:"525 kr/fl", smak:"Svartvinbärsblad, citrus, akaciablommor och mineral. Intensiv, torr och fruktig."},
+  {namn:"Au Bon Climat (ABC) Chardonnay", kat:"Vitt vin", region:"Chardonnay · Santa Barbara", land:"USA", alder:"2019", styrka:"", pris:"750 kr/fl", smak:"Vita persikor, gröna äpplen och örter. Snyggt integrerad fatkaraktär, mogna citroner och brynt smör."},
+  {namn:"Henri de Villamont 1er Cru Chassagne-Montrachet", kat:"Vitt vin", region:"Chardonnay · Bourgogne", land:"Frankrike", alder:"2015", styrka:"", pris:"1425 kr/fl", smak:"Vit persika, päron och citronsorbet. Torrt, fylligt och elegant med vibrerande friskhet och mineral."},
+
+  // ===== Mousserande (Lottas vinlista) =====
+  {namn:"Le Contesse Prosecco Extra Dry", kat:"Mousserande", region:"Glera · Veneto", land:"Italien", alder:"NV", styrka:"", pris:"349 kr/fl", smak:"Päron, honungsmelon, krusbär och persika. Fräsch och insmickrande med rik mousse."},
+  {namn:"Aula Cava Brut", kat:"Mousserande", region:"Macabeo · Cava", land:"Spanien", alder:"NV", styrka:"", pris:"349 kr/fl", smak:"Frukt, vita blommor och lätt brödighet. Elegant med välutvecklad syra."},
+  {namn:"AR Lenoble Grand Cru Blanc de Blancs", kat:"Mousserande", region:"Champagne", land:"Frankrike", alder:"2016", styrka:"", pris:"999 kr/fl", smak:"Vita blommor, gult äpple, nötter och mineral. Torr och tropisk med långt, friskt avslut."},
+  {namn:"Bollinger Special Cuvée", kat:"Mousserande", region:"Champagne", land:"Frankrike", alder:"NV", styrka:"", pris:"999 kr/fl", smak:"Bakat bröd, choklad och höstäpplen. Torr och smakrik med hasselnötter och vitchoklad."},
+  {namn:"Ayala Brut Nature", kat:"Mousserande", region:"Champagne", land:"Frankrike", alder:"NV", styrka:"", pris:"999 kr/fl", smak:"Citrus, äpplen och mineralitet. Frisk och krispig med eleganta brödiga toner."},
+
+  // ===== Rött vin (Lottas vinlista) =====
+  {namn:"Franschhoek Cellars Shiraz", kat:"Rött vin", region:"Shiraz", land:"Sydafrika", alder:"2018", styrka:"", pris:"300 kr/fl", smak:"Plommon, svarta bär och peppar med mörk choklad. Välbalanserad mellan syra och tannin."},
+  {namn:"Grand Renom Bordeaux Supérieur", kat:"Rött vin", region:"Merlot · Bordeaux", land:"Frankrike", alder:"2021", styrka:"", pris:"375 kr/fl", smak:"Röd och mörk frukt med vanilj och ek. Blåbär, björnbär, espresso och tobak."},
+  {namn:"Frescobaldi Nipozzano Chianti Rùfina", kat:"Rött vin", region:"Sangiovese · Toscana", land:"Italien", alder:"2017", styrka:"", pris:"525 kr/fl", smak:"Mogna mörka bär, tobak, mocka och choklad. Komplex, intensiv och elegant torr."},
+  {namn:"John Malkovich LQLC Cabernet Sauvignon", kat:"Rött vin", region:"Cabernet Sauvignon · Rhône", land:"Frankrike", alder:"2015", styrka:"", pris:"600 kr/fl", smak:"Mörk svart frukt och kryddor. Frisk med påtagliga tanniner, svarta vinbär och mint."},
+  {namn:"John Malkovich LQLC Pinot Noir", kat:"Rött vin", region:"Pinot Noir · Rhône", land:"Frankrike", alder:"2016", styrka:"", pris:"600 kr/fl", smak:"Röda bär och mogna hallon. Varm och fruktig med välbalanserade tanniner."},
+  {namn:"Coto de Imaz Gran Reserva", kat:"Rött vin", region:"Tempranillo · Rioja", land:"Spanien", alder:"2014", styrka:"", pris:"675 kr/fl", smak:"Mörk kryddig frukt, fatvanilj och mintchoklad. Komplex och fyllig med björnbär och kryddnejlika."},
+  {namn:"Reine Jeanne Ogier Châteauneuf-du-Pape", kat:"Rött vin", region:"Grenache · Rhône", land:"Frankrike", alder:"2020", styrka:"", pris:"675 kr/fl", smak:"Solmogen röd frukt, örtkryddor, svartpeppar och läder. Fylligt med mjuka, eleganta tanniner."},
+  {namn:"Torre del Falasco Amarone della Valpolicella", kat:"Rött vin", region:"Corvina · Veneto", land:"Italien", alder:"2016", styrka:"", pris:"825 kr/fl", smak:"Mörka bär, torkad frukt, vanilj, choklad och fikon. Fyllig, rik och koncentrerad."},
+  {namn:"Louis M. Martini Cabernet Sauvignon", kat:"Rött vin", region:"Cabernet Sauvignon · Napa", land:"USA", alder:"2018", styrka:"", pris:"825 kr/fl", smak:"Hallon, svarta vinbär, espresso och mörk choklad. Smakrik och fyllig med rostad ek och vanilj."},
+  {namn:"Frescobaldi CastelGiocondo Brunello di Montalcino", kat:"Rött vin", region:"Sangiovese Grosso · Toscana", land:"Italien", alder:"2017", styrka:"", pris:"1125 kr/fl", smak:"Moreller, björnbär och läder. Mjuk och komplex med kaffe, mörk choklad och lång, varm eftersmak."},
+  {namn:"Cerretta Mauro Sebaste Barolo", kat:"Rött vin", region:"Nebbiolo · Piemonte", land:"Italien", alder:"2019", styrka:"", pris:"1275 kr/fl", smak:"Mörka och röda bär, torkade rosor och kryddor. Fyllig och elegant med tryffel och markerade tanniner."},
+  {namn:"Joseph Faiveley Chambolle-Musigny", kat:"Rött vin", region:"Pinot Noir · Bourgogne", land:"Frankrike", alder:"2015", styrka:"", pris:"1350 kr/fl", smak:"Röda bär och mjuk vanilj. Fylligt med mogna moreller och fint samspel mellan tanniner och syra."},
+
+  // ===== Sött & portvin (Lottas vinlista) =====
+  {namn:"Carmes de Rieussec Sémillon", kat:"Sött & portvin", region:"Sémillon · Sauternes", land:"Frankrike", alder:"2017", styrka:"", pris:"599 kr/fl", smak:"Aprikos, mandel och bivax. Söt, frisk och balanserad med tropisk frukt, honung och citrusavslut."},
+  {namn:"Craft 10 Year Old Tawny Port", kat:"Sött & portvin", region:"Touriga Nacional · Douro", land:"Portugal", alder:"10 år", styrka:"", pris:"10 kr/cl", smak:"Valnötter, knäck och syltig frukt. Fyllig med fikon, aprikos och salviahonung i lång eftersmak."},
+  {namn:"Duorum Late Bottled Vintage Port", kat:"Sött & portvin", region:"Touriga Nacional · Douro", land:"Portugal", alder:"2015", styrka:"", pris:"11 kr/cl", smak:"Svarta vinbär och röda bär. Sammetslen med mjuk tanninstruktur och lång, fruktig eftersmak."},
+
+  // ===== Cocktails (Lottas drinkmeny) =====
+  {namn:"Gin & Tonic", kat:"Cocktail", region:"Gin", land:"", alder:"", styrka:"", smak:"En god och avvägd klassiker — gin och tonic i perfekt balans."},
+  {namn:"White Lady", kat:"Cocktail", region:"Gin", land:"", alder:"", styrka:"", smak:"Gin, apelsinlikör och citron. Sägs skapad på Harry's Bar i Paris — Helan & Halvans favorit."},
+  {namn:"Negroni", kat:"Cocktail", region:"Gin", land:"", alder:"", styrka:"", smak:"Gin, Campari och söt vermouth. Elegant och bitter — först mixad ca 1919 på Caffè Casoni."},
+  {namn:"White Russian", kat:"Cocktail", region:"Vodka", land:"", alder:"", styrka:"", smak:"Vodka, kaffelikör och grädde. Kultstatus tack vare The Big Lebowski."},
+  {namn:"Bloody Mary", kat:"Cocktail", region:"Vodka", land:"", alder:"", styrka:"", smak:"Vodka och kryddad tomatjuice. Klassisk brunchdrink uppkallad efter drottning Mary I."},
+  {namn:"Mojito", kat:"Cocktail", region:"Rom", land:"", alder:"", styrka:"", smak:"Ljus rom, lime, mynta, socker och soda. Kubansk klassiker för soliga kvällar."},
+  {namn:"Dark & Stormy", kat:"Cocktail", region:"Rom", land:"", alder:"", styrka:"", smak:"Mörk rom och ingefärsöl. Bermudas officiella cocktail, född i Royal Navy på 1800-talet."},
+  {namn:"Whiskey Sour", kat:"Cocktail", region:"Whiskey", land:"", alder:"", styrka:"", smak:"Whiskey, citrus och socker. En av världens äldsta drinkstilar — i tryck första gången 1862."},
+  {namn:"Gin Sour", kat:"Cocktail", region:"Gin", land:"", alder:"", styrka:"", smak:"Gin, citron och socker skakat med äggvita som ger ett vackert skum."},
+  {namn:"Dry Martini", kat:"Cocktail", region:"Gin", land:"", alder:"", styrka:"", smak:"Torr gin och torr vermouth. Världens mest ikoniska cocktail, i nuvarande form sedan ca 1905."},
+  {namn:"Moscow Mule", kat:"Cocktail", region:"Vodka", land:"", alder:"", styrka:"", smak:"Vodka, ingefära och lime i kopparmugg. Fräsch och kryddig som en åsnespark."},
+  {namn:"Lottas Frozen Strawberry Daiquiri", kat:"Cocktail", region:"Rom", land:"", alder:"", styrka:"", smak:"Husets modernare, frusna variant på daiquirin — Hemingways och JFK:s favoritdrink."},
+  {namn:"Caipirinha", kat:"Cocktail", region:"Cachaça", land:"", alder:"", styrka:"", smak:"Cachaça, lime och socker. Traditionell brasiliansk klassiker med anor från tidigt 1900-tal."},
+  {namn:"Old Fashioned", kat:"Cocktail", region:"Whiskey", land:"", alder:"", styrka:"", smak:"Whiskey, socker och bitters. Gjorde comeback via Mad Men — lika aktuell som för 150 år sedan."},
+  {namn:"Amaretto Sour", kat:"Cocktail", region:"Amaretto", land:"", alder:"", styrka:"", smak:"Söt, aningen bitter amaretto som gifter sig med frisk citron. Omtyckt medlem i sour-familjen."},
+
+  // ===== Öl · Lottas egna (Björkstadens Bryggeri, Umeå) =====
+  {namn:"Björkstadens Kulturlager", kat:"Öl", region:"Lager", land:"Björkstadens Bryggeri", alder:"", styrka:"5,8%", smak:"Ofiltrerad vidareutveckling av Vinterlagern med mindre karamellmalt. Torrhumlad med Amarillo och Citra — en flört med kulturhuvudstadsåret 2014."},
+  {namn:"Björkstadens Bitter Irish Red", kat:"Öl", region:"Irish Red Ale", land:"Björkstadens Bryggeri", alder:"", styrka:"5,5%", smak:"Nyponröd överjäst ale på Maris Otter och rostad malt, humlad med East Kent Golding. Karamell, apelsinskal och smörkola med fruktig ton och tydlig humlebeska."},
+  {namn:"Dr. Paul's Pale Ale", kat:"Öl", region:"Pale Ale", land:"Björkstadens Bryggeri", alder:"", styrka:"6,0%", smak:"Hyllning till stamgästen Paul Junghagen. Maris Otter och Caramünch, humlad med East Kent Golding & Fuggle. Komplex malt och exotisk fruktighet med markerad beska och lång fruktig eftersmak."},
+  {namn:"Björkstadens Special Bitter (B.S.B)", kat:"Öl", region:"Strong Ale / Bitter", land:"Björkstadens Bryggeri", alder:"", styrka:"5,0%", smak:"Mellanmörkt, alkoholstarkt öl av strong ale-typ, byggt på traditionella humlesorter."},
+  {namn:"Lottas Granatpils", kat:"Öl", region:"Pils", land:"Björkstadens Bryggeri", alder:"", styrka:"5,4%", smak:"Underjäst lätt färgad pils på Wienermalt och Carared karamellmalt. Frisk brödig doft, tydlig beska och rostad eftersmak."},
+  {namn:"Björkstadens Vinterlager", kat:"Öl", region:"Lager (Bayersk)", land:"Björkstadens Bryggeri", alder:"", styrka:"6,0%", smak:"Bryggeriets allra första öl (2013), en oktoberöl i bayersk stil. Torrhumlingen gör underverk med aromerna."},
+  {namn:"Dr. Paul's Dubbel Pils", kat:"Öl", region:"Pils (torrhumlad)", land:"Björkstadens Bryggeri", alder:"", styrka:"5,8%", smak:"Torrhumlad pils på 100% Wienermalt. Magnum & Saaz plus torrhumling med Kazbek ger citruslik fräschör och markerad beska."},
+  {namn:"Björkstadens India Pale Ale", kat:"Öl", region:"IPA", land:"Björkstadens Bryggeri", alder:"", styrka:"6,6%", smak:"Överjäst IPA på Pale Ale och Caramünch, humlad med Magnum, East Kent Golding & Cascade. Aromatisk grapefrukt och kryddor, humledominant med markerad beska, apelsinskal och viss sötma."},
+  {namn:"Dr. Paul's Lyx Bayer", kat:"Öl", region:"Bayersk lager", land:"Björkstadens Bryggeri", alder:"", styrka:"", smak:"Bärnstensfärgad lageröl i bayersk stil. Fyllig maltsötma, låg efterbeska och lite specialhumle på slutet — en utmärkt mat-öl."},
+
+  // ===== Öl · övriga (gäst- och flasköl) =====
+  {namn:"Lagunitas IPA", kat:"Öl", region:"American IPA", land:"USA (Kalifornien)", alder:"", styrka:"6,2%", smak:"Amerikansk IPA-klassiker. Citrus, tall och lätt karamellmalt med rund, balanserad humlebeska."},
+  {namn:"Pilsner Urquell", kat:"Öl", region:"Tjeckisk pilsner", land:"Tjeckien", alder:"", styrka:"4,4%", smak:"Originalpilsnern från Plzeň (1842). Gyllene, brödig maltsötma och örtig Saaz-humlebeska."},
+  {namn:"Shepherd Neame Spitfire", kat:"Öl", region:"Kentish Ale / Bitter", land:"England", alder:"", styrka:"4,5%", smak:"Maltig engelsk ale från Kent. Kola, rostat bröd och citrus med torr, örtig humlebeska."},
+  {namn:"Shepherd Neame Bishops Finger", kat:"Öl", region:"Kentish Strong Ale", land:"England", alder:"", styrka:"5,4%", smak:"Fyllig och maltig engelsk strong ale. Torkad frukt, karamell och kryddig humle."},
+  {namn:"Murphy's Irish Stout", kat:"Öl", region:"Dry Stout", land:"Irland", alder:"", styrka:"4,0%", smak:"Krämig irländsk stout från Cork. Kaffe och choklad, mildare och mindre bitter än Guinness."},
+  {namn:"Westmalle Dubbel", kat:"Öl", region:"Trappist Dubbel", land:"Belgien", alder:"", styrka:"7,0%", smak:"Klassisk trappistdubbel. Mörk och maltig med russin, karamell och kryddiga jästtoner."},
+  {namn:"Tripel Karmeliet", kat:"Öl", region:"Belgisk Tripel", land:"Belgien", alder:"", styrka:"8,4%", smak:"Bryggd på korn, vete och havre. Citrus, banan och vanilj med kryddig, torr avslutning."},
+  {namn:"Sitting Bulldog IPA", kat:"Öl", region:"American IPA", land:"Gotlands Bryggeri", alder:"", styrka:"6,4%", smak:"Kopparfärgad IPA på 100% amerikansk humle. Fruktiga och pinjiga toner med solid, torr beska."},
+  {namn:"Sleepy Bulldog Pale Ale", kat:"Öl", region:"English Pale Ale", land:"Gotlands Bryggeri", alder:"", styrka:"4,8%", smak:"Humlearomatisk engelsk pale ale. Aprikos, apelsinskal, örter och knäckebröd med mild pinjebeska."}
+];
+
+/* ---------- Kategori-ordning för chips ---------- */
+const CATS = ["Skotsk single malt","Skotsk blend","Irländsk whiskey","Japansk whisky","Nordisk whisky","Rom","Gin","Tequila","Likör & övrigt","Vitt vin","Mousserande","Rött vin","Sött & portvin","Cocktail","Öl"];
+
+/* ---------- State ---------- */
+let activeCat = "Alla";
+let query = "";
+
+const grid = document.getElementById("grid");
+const chipsEl = document.getElementById("chips");
+const countEl = document.getElementById("count");
+const searchEl = document.getElementById("search");
+
+/* ---------- Bygg chips ---------- */
+function buildChips(){
+  const counts = {};
+  CATS.forEach(c => counts[c] = DATA.filter(d => d.kat === c).length);
+  let html = `<button class="chip active" data-cat="Alla">Alla<span class="n">${DATA.length}</span></button>`;
+  CATS.forEach(c => {
+    html += `<button class="chip" data-cat="${c}">${c}<span class="n">${counts[c]}</span></button>`;
+  });
+  chipsEl.innerHTML = html;
+  chipsEl.querySelectorAll(".chip").forEach(btn=>{
+    btn.addEventListener("click",()=>{
+      activeCat = btn.dataset.cat;
+      chipsEl.querySelectorAll(".chip").forEach(b=>b.classList.toggle("active", b===btn));
+      render();
+    });
+  });
+}
+
+/* ---------- Highlight sökträff ---------- */
+function hl(text, q){
+  if(!q) return escapeHtml(text);
+  const safe = escapeHtml(text);
+  const re = new RegExp("("+q.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")+")","ig");
+  return safe.replace(re,"<mark>$1</mark>");
+}
+function escapeHtml(s){return s.replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));}
+
+/* ---------- Render ---------- */
+function render(){
+  const q = query.trim().toLowerCase();
+  let items = DATA.filter(d=>{
+    if(activeCat!=="Alla" && d.kat!==activeCat) return false;
+    if(!q) return true;
+    return (d.namn+" "+d.kat+" "+d.region+" "+d.land+" "+d.alder+" "+(d.pris||"")+" "+d.smak).toLowerCase().includes(q);
+  });
+
+  countEl.textContent = items.length + (items.length===1 ? " sort" : " sorter") + (activeCat!=="Alla" ? " · "+activeCat : "");
+
+  if(items.length===0){
+    grid.innerHTML = `<div class="empty"><strong>Inga träffar</strong>Prova ett annat sökord eller välj “Alla”.</div>`;
+    return;
+  }
+
+  items.sort((a,b)=>a.namn.localeCompare(b.namn,"sv"));
+
+  grid.innerHTML = items.map(d=>{
+    const color = FAMILY_COLOR[d.kat] || "#c79a4b";
+    const tags = [];
+    if(d.region) tags.push(`<span class="tag">${escapeHtml(d.region)}</span>`);
+    if(d.land && d.land!==d.region) tags.push(`<span class="tag">${escapeHtml(d.land)}</span>`);
+    if(d.alder) tags.push(`<span class="tag age">${escapeHtml(d.alder)}</span>`);
+    if(d.styrka) tags.push(`<span class="tag">${escapeHtml(d.styrka)}</span>`);
+    if(d.pris) tags.push(`<span class="tag price">${escapeHtml(d.pris)}</span>`);
+    return `<article class="card" style="--dot:${color}">
+      <div class="cat">${escapeHtml(d.kat)}</div>
+      <h3>${hl(d.namn,q)}</h3>
+      <div class="meta">${tags.join("")}</div>
+      <p class="notes">${hl(d.smak,q)}</p>
+    </article>`;
+  }).join("");
+}
+
+searchEl.addEventListener("input", e=>{query = e.target.value; render();});
+buildChips();
+render();
+</script>
+</body>
+</html>
