@@ -144,6 +144,10 @@
   .tag.age{color:var(--brass);border-color:rgba(199,154,75,.3)}
   .tag.price{color:var(--brass);border-color:rgba(199,154,75,.3);font-variant-numeric:tabular-nums}
   .notes{font-size:.94rem;color:var(--muted);line-height:1.5}
+  .recept{margin-top:.8rem;padding-top:.7rem;border-top:1px dashed var(--line)}
+  .rlabel{font-size:.66rem;letter-spacing:.18em;text-transform:uppercase;color:var(--brass);font-weight:700;margin-bottom:.2rem}
+  .ring{font-size:.9rem;color:var(--cream);line-height:1.45;margin-bottom:.6rem}
+  .rmet{font-size:.86rem;color:var(--muted);line-height:1.5}
 
   .empty{
     text-align:center;padding:4rem 1rem;color:var(--muted-2);
@@ -398,21 +402,21 @@ const DATA = [
   {namn:"Duorum Late Bottled Vintage Port", kat:"Sött & portvin", region:"Touriga Nacional · Douro", land:"Portugal", alder:"2015", styrka:"", pris:"11 kr/cl", smak:"Svarta vinbär och röda bär. Sammetslen med mjuk tanninstruktur och lång, fruktig eftersmak."},
 
   // ===== Cocktails (Lottas drinkmeny) =====
-  {namn:"Gin & Tonic", kat:"Cocktail", region:"Gin", land:"", alder:"", styrka:"", smak:"En god och avvägd klassiker — gin och tonic i perfekt balans."},
-  {namn:"White Lady", kat:"Cocktail", region:"Gin", land:"", alder:"", styrka:"", smak:"Gin, apelsinlikör och citron. Sägs skapad på Harry's Bar i Paris — Helan & Halvans favorit."},
-  {namn:"Negroni", kat:"Cocktail", region:"Gin", land:"", alder:"", styrka:"", smak:"Gin, Campari och söt vermouth. Elegant och bitter — först mixad ca 1919 på Caffè Casoni."},
-  {namn:"White Russian", kat:"Cocktail", region:"Vodka", land:"", alder:"", styrka:"", smak:"Vodka, kaffelikör och grädde. Kultstatus tack vare The Big Lebowski."},
-  {namn:"Bloody Mary", kat:"Cocktail", region:"Vodka", land:"", alder:"", styrka:"", smak:"Vodka och kryddad tomatjuice. Klassisk brunchdrink uppkallad efter drottning Mary I."},
-  {namn:"Mojito", kat:"Cocktail", region:"Rom", land:"", alder:"", styrka:"", smak:"Ljus rom, lime, mynta, socker och soda. Kubansk klassiker för soliga kvällar."},
-  {namn:"Dark & Stormy", kat:"Cocktail", region:"Rom", land:"", alder:"", styrka:"", smak:"Mörk rom och ingefärsöl. Bermudas officiella cocktail, född i Royal Navy på 1800-talet."},
-  {namn:"Whiskey Sour", kat:"Cocktail", region:"Whiskey", land:"", alder:"", styrka:"", smak:"Whiskey, citrus och socker. En av världens äldsta drinkstilar — i tryck första gången 1862."},
-  {namn:"Gin Sour", kat:"Cocktail", region:"Gin", land:"", alder:"", styrka:"", smak:"Gin, citron och socker skakat med äggvita som ger ett vackert skum."},
-  {namn:"Dry Martini", kat:"Cocktail", region:"Gin", land:"", alder:"", styrka:"", smak:"Torr gin och torr vermouth. Världens mest ikoniska cocktail, i nuvarande form sedan ca 1905."},
-  {namn:"Moscow Mule", kat:"Cocktail", region:"Vodka", land:"", alder:"", styrka:"", smak:"Vodka, ingefära och lime i kopparmugg. Fräsch och kryddig som en åsnespark."},
-  {namn:"Lottas Frozen Strawberry Daiquiri", kat:"Cocktail", region:"Rom", land:"", alder:"", styrka:"", smak:"Husets modernare, frusna variant på daiquirin — Hemingways och JFK:s favoritdrink."},
-  {namn:"Caipirinha", kat:"Cocktail", region:"Cachaça", land:"", alder:"", styrka:"", smak:"Cachaça, lime och socker. Traditionell brasiliansk klassiker med anor från tidigt 1900-tal."},
-  {namn:"Old Fashioned", kat:"Cocktail", region:"Whiskey", land:"", alder:"", styrka:"", smak:"Whiskey, socker och bitters. Gjorde comeback via Mad Men — lika aktuell som för 150 år sedan."},
-  {namn:"Amaretto Sour", kat:"Cocktail", region:"Amaretto", land:"", alder:"", styrka:"", smak:"Söt, aningen bitter amaretto som gifter sig med frisk citron. Omtyckt medlem i sour-familjen."},
+  {namn:"Gin & Tonic", kat:"Cocktail", region:"Gin", land:"", alder:"", styrka:"", recept:"4 cl gin · tonic water · isbitar · lime eller citron · ev. färsk timjan", metod:"1. Fyll ett highballglas med isbitar. 2. Mät upp och häll på 4 cl gin. 3. Fyll upp med tonic water. 4. Garnera med citron- eller limeskiva och ev. en kvist timjan.", smak:"En god och avvägd klassiker — gin och tonic i perfekt balans."},
+  {namn:"White Lady", kat:"Cocktail", region:"Gin", land:"", alder:"", styrka:"", recept:"3 cl gin · 2 cl Cointreau · 2 cl citronjuice · Frothee · is", metod:"1. Skaka alla ingredienser hårt i shaker, först utan is, sedan med is för bästa skumkrona. 2. Häll upp över sil i ett cocktailglas och garnera med citroncest.", smak:"Gin, apelsinlikör och citron. Sägs skapad på Harry's Bar i Paris — Helan & Halvans favorit."},
+  {namn:"Negroni", kat:"Cocktail", region:"Gin", land:"", alder:"", styrka:"", recept:"2 cl Hernö gin · 1,5 cl Campari · 1,5 cl Mancino Vermouth · squeeze apelsinzest · is", metod:"1. Mät upp och blanda gin, bitter och vermouth i shaker eller rörglas med is. 2. Rör ihop och sila drinken i ett fint glas med iskuber. 3. Garnera med en twist apelsinskal och/eller en apelsinskiva.", smak:"Gin, Campari och söt vermouth. Elegant och bitter — först mixad ca 1919 på Caffè Casoni."},
+  {namn:"White Russian", kat:"Cocktail", region:"Vodka", land:"", alder:"", styrka:"", recept:"3 cl kaffelikör · 3 cl vodka · 3 cl grädde", metod:"1. Häll i vodka och kaffelikör i ett lågt glas med is. 2. Toppa med grädde. 3. Njut!", smak:"Vodka, kaffelikör och grädde. Kultstatus tack vare The Big Lebowski."},
+  {namn:"Bloody Mary", kat:"Cocktail", region:"Vodka", land:"", alder:"", styrka:"", recept:"5 cl vodka · 15 cl tomatjuice · 1 stänk tabasco · 1 stänk worcestershiresås · ½ varv salt · 1 varv svartpeppar · 1 stjälk selleri · 1 citronskiva · is", metod:"1. Häll vodka, tomatjuice, tabasco, worcestershiresås och salt i en shaker och skaka med is. 2. Häll ner i ett högt glas och mal över lite svartpeppar. 3. Dekorera med en selleristjälk och en citronskiva.", smak:"Vodka och kryddad tomatjuice. Klassisk brunchdrink uppkallad efter drottning Mary I."},
+  {namn:"Mojito", kat:"Cocktail", region:"Rom", land:"", alder:"", styrka:"", recept:"5 cl ljus rom · 2 cl limejuice · 2 cl sockerlag · sodavatten · färsk mynta", metod:"1. Muddla färsk mynta tillsammans med pressad limejuice. 2. Blanda muddlad mynta och limejuice med sockerlag och ljus rom i ett högt glas. 3. Toppa glaset med sodavatten och isbitar. 4. Garnera med mynta och lime.", smak:"Ljus rom, lime, mynta, socker och soda. Kubansk klassiker för soliga kvällar."},
+  {namn:"Dark & Stormy", kat:"Cocktail", region:"Rom", land:"", alder:"", styrka:"", recept:"5 cl mörk rom (Angostura) · 2 cl färskpressad limejuice · 20 cl ginger beer", metod:"1. Pressa limejuice. 2. Blanda samtliga ingredienser och servera med en limeklyfta. Inte svårare än så!", smak:"Mörk rom och ingefärsöl. Bermudas officiella cocktail, född i Royal Navy på 1800-talet."},
+  {namn:"Whiskey Sour", kat:"Cocktail", region:"Whiskey", land:"", alder:"", styrka:"", recept:"5 cl Maker's Mark · 2 cl citronjuice · 1,5 cl sockerlag · Frothee (för skum) · isbitar · 1 citronskiva till garnering", metod:"1. Kyl gärna dina on-the-rocks-glas medan du blandar. 2. Häll whisky, juice, sockerlag och lite Frothee i en shaker. 3. Tillsätt lite is och skaka. 4. Sila av drinken ner i glasen. 5. Garnera gärna med citronskiva.", smak:"Whiskey, citrus och socker. En av världens äldsta drinkstilar — i tryck första gången 1862."},
+  {namn:"Gin Sour", kat:"Cocktail", region:"Gin", land:"", alder:"", styrka:"", recept:"40 ml Bombay · 20 ml citronjuice · 20 ml sockerlag · 10 ml äggvita", metod:"1. Häll Bombay, citronjuice, sockerlag och äggvita i en shaker. 2. Skaka utan is. Tillsätt is och skaka kraftigt. 3. Sila ner i ett whiskyglas fyllt med is.", smak:"Gin, citron och socker skakat med äggvita som ger ett vackert skum."},
+  {namn:"Dry Martini", kat:"Cocktail", region:"Gin", land:"", alder:"", styrka:"", recept:"5 cl gin (väl kyld) · 1 cl torr vermouth (väl kyld) · is · oliv", metod:"1. Kyl ett martiniglas innan du blandar. 2. Mät upp gin och torr vermouth i ett glas med is eller i en shaker med is — skakad som James Bond, eller rörd. 3. Skaka eller rör och sila ner i det välkylda glaset. 4. Dekorera med en oliv eller två på en tandpetare.", smak:"Torr gin och torr vermouth. Världens mest ikoniska cocktail, i nuvarande form sedan ca 1905."},
+  {namn:"Moscow Mule", kat:"Cocktail", region:"Vodka", land:"", alder:"", styrka:"", recept:"5 cl vodka · 2 cl limejuice · 3 stänk Angostura Bitter · ginger beer att toppa med · is · limeklyftor och mynta till garnering", metod:"1. Lägg is i glas eller kopparmugg. 2. Häll på de första ingredienserna och toppa försiktigt med ginger beer. 3. Garnera med en limeklyfta och färsk mynta.", smak:"Vodka, ingefära och lime i kopparmugg. Fräsch och kryddig som en åsnespark."},
+  {namn:"Lottas Frozen Strawberry Daiquiri", kat:"Cocktail", region:"Rom", land:"", alder:"", styrka:"", recept:"kross-is · jordgubbspuré · 2 cl pressad limejuice · 1 cl sockerlag · 4 cl vit rom · 5–8 cl Sprite", metod:"1. Häll samtliga ingredienser i ett vinglas tillsammans med krossad is (halva glaset). 2. Blanda allt och fyll på med kross-is upp till kanten. Toppa med Sprite och garnera med jordgubbe/citron.", smak:"Husets modernare, frusna variant på daiquirin — Hemingways och JFK:s favoritdrink."},
+  {namn:"Caipirinha", kat:"Cocktail", region:"Cachaça", land:"", alder:"", styrka:"", recept:"5 cl ljus rom · 1 lime · 2,5 tsk råsocker · krossad is", metod:"1. Muddla limeklyftor och socker tillsammans i glaset. 2. Fyll upp halva glaset med krossad is och tillsätt rom, rör om. 3. Fyll upp med mer krossad is och garnera med en limeklyfta.", smak:"Cachaça, lime och socker. Traditionell brasiliansk klassiker med anor från tidigt 1900-tal."},
+  {namn:"Old Fashioned", kat:"Cocktail", region:"Whiskey", land:"", alder:"", styrka:"", recept:"5 cl Maker's Mark · 1 cl råsockerlag · 3 skvättar Angostura", metod:"1. Rör alla ingredienser med is för att kyla ner och tillföra vatten från isen. 2. Servera i ett kallt glas med is, garnera med apelsinzest.", smak:"Whiskey, socker och bitters. Gjorde comeback via Mad Men — lika aktuell som för 150 år sedan."},
+  {namn:"Amaretto Sour", kat:"Cocktail", region:"Amaretto", land:"", alder:"", styrka:"", recept:"5 cl Amaretto · 3 cl citronjuice · 2 cl sockerlag · 1 cl Frothee", metod:"1. Häll samtliga ingredienser i en shaker. 2. Torrskaka sedan hårt. 3. Skaka därefter med is. 4. Sila upp i ett glas fyllt med is.", smak:"Söt, aningen bitter amaretto som gifter sig med frisk citron. Omtyckt medlem i sour-familjen."},
 
   // ===== Öl · Lottas egna (Björkstadens Bryggeri, Umeå) =====
   {namn:"Björkstadens Kulturlager", kat:"Öl", region:"Lager", land:"Björkstadens Bryggeri", alder:"", styrka:"5,8%", smak:"Ofiltrerad vidareutveckling av Vinterlagern med mindre karamellmalt. Torrhumlad med Amarillo och Citra — en flört med kulturhuvudstadsåret 2014."},
@@ -482,7 +486,7 @@ function render(){
   let items = DATA.filter(d=>{
     if(activeCat!=="Alla" && d.kat!==activeCat) return false;
     if(!q) return true;
-    return (d.namn+" "+d.kat+" "+d.region+" "+d.land+" "+d.alder+" "+(d.pris||"")+" "+d.smak).toLowerCase().includes(q);
+    return (d.namn+" "+d.kat+" "+d.region+" "+d.land+" "+d.alder+" "+(d.pris||"")+" "+d.smak+" "+(d.recept||"")+" "+(d.metod||"")).toLowerCase().includes(q);
   });
 
   countEl.textContent = items.length + (items.length===1 ? " sort" : " sorter") + (activeCat!=="Alla" ? " · "+activeCat : "");
@@ -507,6 +511,12 @@ function render(){
       <h3>${hl(d.namn,q)}</h3>
       <div class="meta">${tags.join("")}</div>
       <p class="notes">${hl(d.smak,q)}</p>
+      ${d.recept?`<div class="recept">
+        <div class="rlabel">Ingredienser</div>
+        <p class="ring">${hl(d.recept,q)}</p>
+        <div class="rlabel">Gör så här</div>
+        <p class="rmet">${hl(d.metod||"",q)}</p>
+      </div>`:""}
     </article>`;
   }).join("");
 }
